@@ -1,0 +1,329 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f1117;
+  color: #e8eaf0;
+  min-height: 100vh;
+}
+
+/* ---- Login Page ---- */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f1117;
+}
+
+.login-box {
+  background: #1e2235;
+  border: 1px solid #2e3354;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-box h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #e8eaf0;
+}
+
+.login-box p {
+  color: #7c84a0;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: 220px;
+  background: #1a1d27;
+  border-right: 1px solid #2e3354;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+}
+
+.sidebar-logo {
+  padding: 24px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #4f7dff;
+  border-bottom: 1px solid #2e3354;
+}
+
+.sidebar nav {
+  flex: 1;
+  padding: 16px 10px;
+}
+
+.nav-item {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #7c84a0;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-bottom: 4px;
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background: #22263a;
+  color: #e8eaf0;
+}
+
+.nav-item.active {
+  background: #22263a;
+  color: #4f7dff;
+}
+
+.sidebar-user {
+  margin: 0 10px;
+  padding: 12px;
+  background: #22263a;
+  border-radius: 8px;
+}
+
+.sidebar-user .uname {
+  font-weight: 600;
+  font-size: 14px;
+  color: #e8eaf0;
+}
+
+.sidebar-user .urole {
+  font-size: 12px;
+  color: #7c84a0;
+  margin-top: 2px;
+}
+
+/* ---- Main Content ---- */
+.main {
+  margin-left: 220px;
+  padding: 28px;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.topbar h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ---- Buttons ---- */
+button {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: #4f7dff;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: #3b6ee8;
+}
+
+/* ---- Forms ---- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: #7c84a0;
+  font-weight: 500;
+}
+
+input, select {
+  background: #1a1d27;
+  border: 1px solid #2e3354;
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: #e8eaf0;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+input:focus, select:focus {
+  border-color: #4f7dff;
+}
+
+input::placeholder {
+  color: #7c84a0;
+}
+
+/* ---- Cards ---- */
+.card {
+  background: #1e2235;
+  border: 1px solid #2e3354;
+  border-radius: 10px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #e8eaf0;
+}
+
+/* ---- Stats ---- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #1e2235;
+  border: 1px solid #2e3354;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.stat-card .label {
+  font-size: 12px;
+  color: #7c84a0;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-card .value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #4f7dff;
+}
+
+/* ---- Sections ---- */
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+/* ---- Table ---- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7c84a0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #2e3354;
+}
+
+tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #2e3354;
+  color: #e8eaf0;
+}
+
+tbody tr:hover {
+  background: rgba(79, 125, 255, 0.05);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---- Form Grid ---- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* ---- Logout Button ---- */
+.logout-btn {
+  background: #4f7dff;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #3b6ee8;
+  
+}
+
+/* ---- Delete Button ---- */
+.btn-delete {
+  background: #e05260;
+  padding: 5px 12px;
+  font-size: 12px;
+}
+
+.btn-delete:hover {
+  background: #c4424f;
+}
+
+/* ---- Edit Button ---- */
+.btn-edit {
+  background: #38c98a;
+  padding: 5px 12px;
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.btn-edit:hover {
+  background: #2daf73;
+}
+
+/* ---- Print ---- */
+@media print {
+  body * { visibility: hidden; }
+  #slip, #slip * { visibility: visible; }
+  #slip { position: absolute; top: 0; left: 0; width: 100%; }
+}

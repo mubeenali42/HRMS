@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRMS — HR Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">HRMS</div>
+  <nav>
+    <a class="nav-item active" onclick="showSection('dashboard', this)">Dashboard</a>
+    <a class="nav-item" onclick="showSection('employees', this)">Employees</a>
+    <a class="nav-item" onclick="showSection('attendance', this)">Attendance</a>
+    <a class="nav-item" onclick="showSection('salary', this)">Salary</a>
+    <a class="nav-item" onclick="showSection('leaves', this)">Leave Requests</a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="uname" id="sb-name">—</div>
+    <div class="urole" id="sb-role">—</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="page-title">Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="sec-dashboard" class="section active">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Total Employees</div>
+        <div class="value" id="st-emp">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today Present</div>
+        <div class="value" id="st-pres">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today Absent</div>
+        <div class="value" id="st-abs">0</div>
+      </div>
+    </div>
+
+    
+  </div>
+
+
+  <!-- EMPLOYEES -->
+  <div id="sec-employees" class="section">
+    <div class="card">
+      <div class="card-title">Add New Employee</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name</label>
+          <input id="e-name" placeholder="Full Name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="e-email" placeholder="email@company.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="e-pass" placeholder="Login password">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input id="e-dept" placeholder="IT, HR, Finance...">
+        </div>
+        <div class="form-group">
+          <label>Salary per Day (Rs)</label>
+          <input type="number" id="e-sal" placeholder="2000">
+        </div>
+      </div>
+      <button onclick="addEmployee()">+ Employee Add </button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Employees List</div>
+      
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input id="emp-search" placeholder="Enter Your Name or Email Address..." onkeyup="searchEmployee()"
+            style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+      </div>
+</div>
+
+      <table id="emp-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Email</th>
+            <th>Department</th><th>Per Day Salary</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE -->
+  <div id="sec-attendance" class="section">
+    <div class="card">
+      <div class="card-title">Mark Attendance</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Employee</label>
+          <select id="att-emp"></select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="att-date">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="att-status">
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+            <option value="leave">Leave</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="markAttendance()">Attendance Lagaen</button>
+
+    </div>
+
+    <div class="card">
+      <div class="card-title">Attendance Records</div>
+      
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+            <input id="att-search" placeholder="Enter Your Name or Email Address..." onkeyup="searchAttendance()"
+              style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+      </div>
+</div>
+      <table id="att-table">
+        <thead>
+          <tr><th>Name</th><th>Date</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SALARY -->
+  <div id="sec-salary" class="section">
+    <div class="card">
+      <div class="card-title">Salary Calculate</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Employee</label>
+          <select id="sal-emp"></select>
+        </div>
+        <div class="form-group">
+          <label>Month</label>
+          <input type="month" id="sal-month">
+        </div>
+      </div>
+      <button onclick="calculateSalary()">Submit</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Salary Records</div>
+
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input id="sal-search" placeholder="Enter Your Name or Email Address..." onkeyup="searchSalary()"
+            style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+      </div>
+</div>
+      <table id="sal-table">
+        <thead>
+          <tr>
+            <th>Name</th><th>Month</th><th>Total Day</th>
+            <th>Present Day</th><th>Total Salary</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+  <!-- LEAVE REQUESTS -->
+  <div id="sec-leaves" class="section">
+    <div class="card">
+      <div class="card-title">Leave Requests</div>
+
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input id="leave-search" placeholder="Enter Your Name or Email Address..." onkeyup="searchLeave()"
+            style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+      </div>
+</div>
+      <table id="leave-table">
+        <thead>
+          <tr>
+            <th>Name</th><th>Date</th><th>Reason</th>
+            <th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = CONFIG.API_BASE;
+let user = null;
+
+window.onload = () => {
+  user = JSON.parse(localStorage.getItem("hrms_user") || "null");
+  if (!user || user.role === "employee") {
+    window.location.href = "/";
+    return;
+  }
+  document.getElementById("sb-name").textContent = user.name;
+  document.getElementById("sb-role").textContent = user.role === "superadmin" ? "Super Admin" : "HR Admin";
+
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("att-date").value = today;
+  document.getElementById("sal-month").value = new Date().toISOString().slice(0, 7);
+
+  loadDashboard();
+  loadEmployees();
+  loadAttendance();
+  loadSalary();
+  loadLeaves();
+};
+
+function logout() {
+  localStorage.removeItem("hrms_user");
+  window.location.href = "/";
+}
+
+function showSection(s, el) {
+  document.querySelectorAll(".section").forEach(d => d.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("sec-" + s).classList.add("active");
+  el.classList.add("active");
+  document.getElementById("page-title").textContent =
+    {dashboard:"Dashboard", employees:"Employees", attendance:"Attendance", salary:"Salary"}[s];
+}
+
+function showMsg(msg, type="success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.style.borderLeft = type === "success" ? "3px solid #38c98a" : "3px solid #e05260";
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 3000);
+}
+
+async function loadDashboard() {
+  const emps = await fetch(`${API}/employees`).then(r => r.json()).catch(() => []);
+  const atts = await fetch(`${API}/attendance`).then(r => r.json()).catch(() => []);
+  const today = new Date().toISOString().split("T")[0];
+  const todayAtt = atts.filter(a => a.date === today);
+
+  document.getElementById("st-emp").textContent  = emps.length;
+  document.getElementById("st-pres").textContent = todayAtt.filter(a => a.status === "present").length;
+  document.getElementById("st-abs").textContent  = todayAtt.filter(a => a.status === "absent").length;
+ 
+}
+
+async function loadEmployees() {
+  const emps = await fetch(`${API}/employees`).then(r => r.json()).catch(() => []);
+  const tbody = document.querySelector("#emp-table tbody");
+  tbody.innerHTML = emps.length === 0
+    ? `<tr><td colspan="6" style="text-align:center">No Employee Found</td></tr>`
+    : emps.map(e => `
+      <tr>
+        <td>${e.id}</td>
+        <td>${e.name}</td>
+        <td>${e.email}</td>
+        <td>${e.department || "—"}</td>
+        <td>Rs ${e.salary_per_day}</td>
+        <td>
+          <button onclick="editEmployee(${e.id}, '${e.name}', '${e.email}', '${e.department}', ${e.salary_per_day})">Edit</button>
+          <button onclick="deleteEmployee(${e.id})">Delete</button>
+        </td>
+      </tr>`).join("");
+
+  const attSel = document.getElementById("att-emp");
+  const salSel = document.getElementById("sal-emp");
+  attSel.innerHTML = salSel.innerHTML = emps.map(e =>
+    `<option value="${e.id}">${e.name}</option>`).join("");
+}
+
+async function addEmployee() {
+  const name  = document.getElementById("e-name").value.trim();
+  const email = document.getElementById("e-email").value.trim();
+  const pass  = document.getElementById("e-pass").value.trim();
+  const dept  = document.getElementById("e-dept").value.trim();
+  const sal   = document.getElementById("e-sal").value;
+
+  if (!name || !email || !pass) { showMsg("Name and Email and Password are Required"); return; }
+
+  const res  = await fetch(`${API}/employees`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password: pass, department: dept, salary_per_day: sal })
+  });
+  const data = await res.json();
+  showMsg(res.ok ? "Employee add ho gaya!" : data.detail);
+  if (res.ok) {
+    ["e-name","e-email","e-pass","e-dept","e-sal"].forEach(id => document.getElementById(id).value = "");
+    loadEmployees();
+    loadDashboard();
+  }
+}
+
+async function deleteEmployee(id) {
+  if (!confirm("Delete karna chahte hain?")) return;
+  const res  = await fetch(`${API}/employees/${id}`, { method: "DELETE" });
+  const data = await res.json();
+  showMsg(data.message || data.detail);
+  loadEmployees();
+  loadDashboard();
+}
+
+async function loadAttendance() {
+  const atts  = await fetch(`${API}/attendance`).then(r => r.json()).catch(() => []);
+  const tbody = document.querySelector("#att-table tbody");
+  tbody.innerHTML = atts.length === 0
+    ? `<tr><td colspan="4" style="text-align:center">No Records Found</td></tr>`
+    : [...atts].reverse().slice(0, 50).map(a => `
+      <tr>
+        <td>${a.name}</td>
+        <td>${a.date}</td>
+        <td>${a.status}</td>
+        <td><button onclick="deleteAtt(${a.attendance_id})">Delete</button></td>
+      </tr>`).join("");
+}
+
+async function markAttendance() {
+  const user_id = document.getElementById("att-emp").value;
+  const date    = document.getElementById("att-date").value;
+  const status  = document.getElementById("att-status").value;
+  if (!user_id || !date) { showMsg("Please Select Employee and Date"); return; }
+
+  const res  = await fetch(`${API}/attendance`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: parseInt(user_id), date, status })
+  });
+  const data = await res.json();
+  showMsg(data.message || data.detail);
+  loadAttendance();
+  loadDashboard();
+}
+
+async function deleteAtt(id) {
+  const res  = await fetch(`${API}/attendance/${id}`, { method: "DELETE" });
+  const data = await res.json();
+  showMsg(data.message || data.detail);
+  loadAttendance();
+  loadDashboard();
+}
+
+async function loadSalary() {
+  const records = await fetch(`${API}/salary`).then(r => r.json()).catch(() => []);
+  const tbody   = document.querySelector("#sal-table tbody");
+  tbody.innerHTML = records.length === 0
+    ? `<tr><td colspan="5" style="text-align:center">No Records Found</td></tr>`
+    : [...records].reverse().map(r => `
+      <tr>
+        <td>${r.name}</td>
+        <td>${r.month}</td>
+        <td>${r.total_days}</td>
+        <td>${r.present_days}</td>
+        <td>Rs ${r.total_salary}</td>
+      </tr>`).join("");
+}
+
+async function calculateSalary() {
+  const user_id = document.getElementById("sal-emp").value;
+  const month   = document.getElementById("sal-month").value;
+  if (!user_id || !month) { showMsg("Please Select Employee and Month"); return; }
+
+  const res  = await fetch(`${API}/salary/calculate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: parseInt(user_id), month })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showMsg(`Salary Calculated Successfully — Rs ${data.total_salary} (${data.present_days} Days Present)`);
+    loadSalary();
+  } else {
+    showMsg(data.detail);
+  }
+}
+
+
+function editEmployee(id, name, email, dept, sal) {
+  const newName = prompt("Name:", name);
+  if (!newName) return;
+  const newEmail = prompt("Email:", email);
+  if (!newEmail) return;
+  const newDept = prompt("Department:", dept);
+  const newSal  = prompt("Salary per Day:", sal);
+
+  fetch(`${API}/employees/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: newName,
+      email: newEmail,
+      department: newDept,
+      salary_per_day: newSal
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    showMsg(data.message || data.detail);
+    loadEmployees();
+  });
+}
+
+
+async function loadLeaves() {
+  const records = await fetch(`${API}/leaves`).then(r => r.json()).catch(() => []);
+  const tbody   = document.querySelector("#leave-table tbody");
+  tbody.innerHTML = records.length === 0
+    ? `<tr><td colspan="5" style="text-align:center">No Leave Request Found</td></tr>`
+    : records.map(l => `
+        <tr>
+          <td>${l.name}</td>
+          <td>${l.date}</td>
+          <td>${l.reason || "—"}</td>
+          <td>${l.status}</td>
+          <td>
+            ${l.status === "pending" ? `
+              <button class="btn-edit" onclick="updateLeave(${l.id}, 'approved')">Approve</button>
+              <button class="btn-delete" onclick="updateLeave(${l.id}, 'rejected')">Reject</button>
+            ` : "—"}
+          </td>
+        </tr>`).join("");
+}
+
+async function updateLeave(id, status) {
+  const res  = await fetch(`${API}/leaves/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status })
+  });
+  const data = await res.json();
+  showMsg(data.message || data.detail);
+  loadLeaves();
+  loadAttendance();
+}
+
+function searchEmployee() {
+  const query = document.getElementById("emp-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#emp-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+
+function searchAttendance() {
+  const query = document.getElementById("att-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#att-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+
+function searchSalary() {
+  const query = document.getElementById("sal-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#sal-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+
+function searchLeave() {
+  const query = document.getElementById("leave-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#leave-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+</script>
+
+
+<div id="toast" style="
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  background:#1e2235;
+  border:1px solid #2e3354;
+  border-radius:10px;
+  padding:14px 20px;
+  font-size:14px;
+  color:#e8eaf0;
+  display:none;
+  z-index:999;
+  min-width:250px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+"></div>
+</body>
+</html>

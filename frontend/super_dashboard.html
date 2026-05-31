@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRMS — Super Admin</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">HRMS</div>
+  <nav>
+    <a class="nav-item active" onclick="showSection('dashboard', this)">Dashboard</a>
+    <a class="nav-item" onclick="showSection('hr', this)">HR Managers</a>
+    <a class="nav-item" onclick="showSection('employees', this)">Employees</a>
+    <a class="nav-item" onclick="showSection('attendance', this)">Attendance</a>
+    <a class="nav-item" onclick="showSection('salary', this)">Salary</a>
+    <a class="nav-item" onclick="showSection('report', this)">Monthly Report</a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="uname" id="sb-name">—</div>
+    <div class="urole">Super Admin</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="page-title">Dashboard</h1>
+    <button id="logout-btn" style="background:#4f7dff;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;" onmouseover="this.style.background='#3b6ee8'" onmouseout="this.style.background='#4f7dff'">Logout</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="sec-dashboard" class="section active">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Total HR Managers</div>
+        <div class="value" id="st-hr">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Employees</div>
+        <div class="value" id="st-emp">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today Present</div>
+        <div class="value" id="st-pres">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today Absent</div>
+        <div class="value" id="st-abs">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HR MANAGERS -->
+  <div id="sec-hr" class="section">
+    <div class="card">
+      <div class="card-title">Add New HR Manager</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Naam</label>
+          <input id="hr-name" placeholder="Full Name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="hr-email" placeholder="email@company.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="hr-pass" placeholder="Login password">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input id="hr-dept" placeholder="HR, Management...">
+        </div>
+      </div>
+      <button onclick="addHR()">+ Add HR Manager </button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">HR Managers List</div>
+      <table id="hr-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Naam</th><th>Email</th>
+            <th>Department</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EMPLOYEES -->
+  <div id="sec-employees" class="section">
+    <div class="card">
+      <div class="card-title">Employees List</div>
+      
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input id="emp-search" placeholder="Search by Name or Email..." onkeyup="searchEmployee()"
+            style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+      </div>
+</div>
+      <table id="emp-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Naam</th><th>Email</th>
+            <th>Department</th><th>Per Din Salary</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE -->
+  <div id="sec-attendance" class="section">
+    <div class="card">
+      <div class="card-title">Attendance Records</div>
+
+        <div style="text-align:center; margin-bottom:24px;">
+          <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input id="att-search" placeholder="Search by Name or Date..." onkeyup="searchAttendance()"
+              style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+      </div>
+</div>
+      <table id="att-table">
+        <thead>
+          <tr><th>Naam</th><th>Date</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SALARY -->
+  <div id="sec-salary" class="section">
+    <div class="card">
+      <div class="card-title">Salary Records</div>
+        <div style="text-align:center; margin-bottom:24px;">
+         <div style="display:inline-flex; align-items:center; background:#1a1d27; border:1px solid #2e3354; border-radius:50px; padding:10px 20px; width:60%; gap:10px;">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c84a0" stroke-width="2">
+             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+           </svg>
+           <input id="sal-search" placeholder="Search by Name or Month..." onkeyup="searchSalary()"
+             style="border:none; background:transparent; outline:none; width:100%; font-size:15px; color:#e8eaf0;">
+        </div>
+</div>
+      <table id="sal-table">
+        <thead>
+          <tr>
+            <th>Naam</th><th>Month</th><th>Total Din</th>
+            <th>Present Din</th><th>Total Salary</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+<!-- MONTHLY REPORT -->
+  <div id="sec-report" class="section">
+    <div class="card">
+      <div class="card-title">All Employees Report</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Month Select</label>
+          <input type="month" id="report-month">
+        </div>
+      </div>
+      <button onclick="downloadReport()">Download All Employees Report (PDF)</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Single Employee Report</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Employee Select </label>
+          <select id="report-emp"></select> 
+        </div>
+        <div class="form-group">
+          <label>Month and Year Select </label>
+          <input type="month" id="report-month-single">
+        </div>
+      </div>
+      <button onclick="downloadSingleReport()">Download Employee Report (PDF)</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = "/api";
+let user = null;
+
+window.onload = () => {
+  user = JSON.parse(localStorage.getItem("hrms_user") || "null");
+  if (!user || user.role !== "superadmin") {
+    window.location.href = "/";
+    return;
+  }
+  document.getElementById("sb-name").textContent = user.name;
+  document.getElementById("report-month").value = new Date().toISOString().slice(0, 7);
+
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    localStorage.removeItem("hrms_user");
+    window.location.href = "/";
+  });
+
+  loadDashboard();
+  loadHR();
+  loadEmployees();
+  loadAttendance();
+  loadSalary();
+};
+
+function showSection(s, el) {
+  document.querySelectorAll(".section").forEach(d => d.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("sec-" + s).classList.add("active");
+  el.classList.add("active");
+  const titles = {
+    dashboard: "Dashboard", hr: "HR Managers",
+    employees: "Employees", attendance: "Attendance",
+    salary: "Salary", report: "Monthly Report"
+  };
+  document.getElementById("page-title").textContent = titles[s];
+}
+
+function showMsg(msg, type="success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.style.borderLeft = type === "error" ? "3px solid #e05260" : "3px solid #38c98a";
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 3000);
+}
+
+async function loadDashboard() {
+  const hrs  = await fetch(`${API}/hr-managers`).then(r => r.json()).catch(() => []);
+  const emps = await fetch(`${API}/employees`).then(r => r.json()).catch(() => []);
+  const atts = await fetch(`${API}/attendance`).then(r => r.json()).catch(() => []);
+  const today = new Date().toISOString().split("T")[0];
+  const todayAtt = atts.filter(a => a.date === today);
+
+  document.getElementById("st-hr").textContent   = hrs.length;
+  document.getElementById("st-emp").textContent  = emps.length;
+  document.getElementById("st-pres").textContent = todayAtt.filter(a => a.status === "present").length;
+  document.getElementById("st-abs").textContent  = todayAtt.filter(a => a.status === "absent").length;
+}
+
+async function loadHR() {
+  const hrs   = await fetch(`${API}/hr-managers`).then(r => r.json()).catch(() => []);
+  const tbody = document.querySelector("#hr-table tbody");
+  tbody.innerHTML = hrs.length === 0
+    ? `<tr><td colspan="5" style="text-align:center">Koi HR Manager nahi hai</td></tr>`
+    : hrs.map(h => `
+      <tr>
+        <td>${h.id}</td>
+        <td>${h.name}</td>
+        <td>${h.email}</td>
+        <td>${h.department || "—"}</td>
+        <td>
+          <button class="btn-delete" onclick="deleteHR(${h.id})">Delete</button>
+        </td>
+      </tr>`).join("");
+}
+
+async function addHR() {
+  const name  = document.getElementById("hr-name").value.trim();
+  const email = document.getElementById("hr-email").value.trim();
+  const pass  = document.getElementById("hr-pass").value.trim();
+  const dept  = document.getElementById("hr-dept").value.trim();
+
+  if (!name || !email || !pass) { showMsg("Name, Email and Password are Required"); return; }
+
+  const res  = await fetch(`${API}/hr-managers`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password: pass, department: dept })
+  });
+  const data = await res.json();
+  showMsg(res.ok ? "HR Manager Added Successfully!" : data.detail);
+  if (res.ok) {
+    ["hr-name","hr-email","hr-pass","hr-dept"].forEach(id => document.getElementById(id).value = "");
+    loadHR();
+    loadDashboard();
+  }
+}
+
+async function deleteHR(id) {
+  if (!confirm("Are you sure? HR Manager will be deleted?")) return;
+  const res  = await fetch(`${API}/hr-managers/${id}`, { method: "DELETE" });
+  const data = await res.json();
+  showMsg(data.message || data.detail);
+  loadHR();
+  loadDashboard();
+} 
+
+async function loadEmployees() {
+  const emps  = await fetch(`${API}/employees`).then(r => r.json()).catch(() => []);
+  const tbody = document.querySelector("#emp-table tbody");
+  tbody.innerHTML = emps.length === 0
+    ? `<tr><td colspan="5" style="text-align:center">Koi employee nahi hai</td></tr>`
+    : emps.map(e => `
+      <tr>
+        <td>${e.id}</td>
+        <td>${e.name}</td>
+        <td>${e.email}</td>
+        <td>${e.department || "—"}</td>
+        <td>Rs ${e.salary_per_day}</td>
+      </tr>`).join("");
+
+  // Report dropdown fill karo
+  const reportSel = document.getElementById("report-emp");
+  if (reportSel) {
+    reportSel.innerHTML = emps.map(e =>
+      `<option value="${e.id}">${e.name}</option>`).join("");
+  }
+}
+
+async function loadAttendance() {
+  const atts  = await fetch(`${API}/attendance`).then(r => r.json()).catch(() => []);
+  const tbody = document.querySelector("#att-table tbody");
+  tbody.innerHTML = atts.length === 0
+    ? `<tr><td colspan="3" style="text-align:center">Koi record nahi hai</td></tr>`
+    : [...atts].reverse().slice(0, 50).map(a => `
+      <tr>
+        <td>${a.name}</td>
+        <td>${a.date}</td>
+        <td>${a.status}</td>
+      </tr>`).join("");
+}
+
+async function loadSalary() {
+  const records = await fetch(`${API}/salary`).then(r => r.json()).catch(() => []);
+  const tbody   = document.querySelector("#sal-table tbody");
+  tbody.innerHTML = records.length === 0
+    ? `<tr><td colspan="5" style="text-align:center">Koi record nahi hai</td></tr>`
+    : [...records].reverse().map(r => `
+      <tr>
+        <td>${r.name}</td>
+        <td>${r.month}</td>
+        <td>${r.total_days}</td>
+        <td>${r.present_days}</td>
+        <td>Rs ${r.total_salary}</td>
+      </tr>`).join("");
+}
+
+async function downloadReport() {
+  const month = document.getElementById("report-month").value;
+  if (!month) { showMsg("Please Select Month and Year"); return; }
+
+  window.location.href = `${API}/report/${month}`;
+}
+function searchEmployee() {
+  const query = document.getElementById("emp-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#emp-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+
+function searchAttendance() {
+  const query = document.getElementById("att-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#att-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+
+function searchSalary() {
+  const query = document.getElementById("sal-search").value.toLowerCase();
+  const rows  = document.querySelectorAll("#sal-table tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+}
+
+async function downloadSingleReport() {
+  const emp_id = document.getElementById("report-emp").value;
+  const month  = document.getElementById("report-month-single").value;
+  if (!emp_id || !month) { showMsg("Please Select Employee, Month and Year"); return; }
+  window.location.href = `${API}/report/${month}/employee/${emp_id}`;
+}
+
+</script>
+
+<div id="toast" style="
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  background:#1e2235;
+  border:1px solid #2e3354;
+  border-radius:10px;
+  padding:14px 20px;
+  font-size:14px;
+  color:#e8eaf0;
+  display:none;
+  z-index:999;
+  min-width:250px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+"></div>
+</body>
+</html>

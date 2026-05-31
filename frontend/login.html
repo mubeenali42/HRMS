@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRMS — Login</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+ <div class="login-page">
+  <div class="login-box"> 
+
+<h2>HRMS Portal</h2>
+<p>Enter Your Email Address and Password</p>
+
+<div>
+  <label>Email</label><br>
+  <input type="email" id="email" placeholder="email@example.com"><br><br>
+  <label>Password</label><br>
+  <input type="password" id="password" placeholder="password"><br><br>
+  <button id="login-btn">Login</button>
+  <p id="err-msg" style="color:red;display:none;"></p>
+</div>
+
+<script>
+const API = "/api";
+
+document.getElementById("login-btn").addEventListener("click", async function() {
+  const email    = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const err      = document.getElementById("err-msg");
+  err.style.display = "none";
+
+  if (!email || !password) {
+    err.textContent   = "Email aur password daalen";
+    err.style.display = "block";
+    return;
+  }
+
+  try {
+    const res  = await fetch(API + "/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      err.textContent   = data.detail || "Login fail";
+      err.style.display = "block";
+      return;
+    }
+
+    localStorage.setItem("hrms_user", JSON.stringify(data));
+
+    if (data.role === "employee") {
+      window.location.href = "/employee";
+    } else if (data.role === "superadmin") {
+      window.location.href = "/super";
+    } else {
+      window.location.href = "/hr";
+    } 
+
+
+  } catch(e) {
+    err.textContent   = "Server se connect nahi ho saka";
+    err.style.display = "block";
+  }
+});
+</script>
+
+
+</div>
+</div>
+</body>
+</html>

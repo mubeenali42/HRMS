@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRMS — Employee Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">HRMS</div>
+  <nav>
+    <a class="nav-item active" onclick="showSection('attendance', this)">My Attendance</a>
+    <a class="nav-item" onclick="showSection('salary', this)">My Salary</a>
+    <a class="nav-item" onclick="showSection('leaves', this)">My Leave Requests</a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="uname" id="sb-name">—</div>
+    <div class="urole" id="sb-dept">—</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="page-title">My Attendance</h1>
+    <button id="logout-btn" style="background:#4f7dff;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;" onmouseover="this.style.background='#3b6ee8'" onmouseout="this.style.background='#4f7dff'">Logout</button>
+  </div>
+
+  <!-- ATTENDANCE -->
+  <div id="sec-attendance" class="section active">
+    <div class="card">
+      <div class="card-title">Attendance History</div>
+      <table id="att-table">
+        <thead><tr><th>Date</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SALARY -->
+  <div id="sec-salary" class="section">
+    <div class="card">
+      <div class="card-title">Salary Records</div>
+      <table id="sal-table">
+        <thead>
+          <tr>
+            <th>Month</th><th>Total Days</th>
+            <th>Present Din</th><th>Salary</th><th>Slip</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Salary Slip -->
+    <div id="slip" class="card" style="display:none;">
+      <div class="card-title">Salary Slip</div>
+      <table style="width:auto">
+        <tbody>
+          <tr><td style="padding:8px 20px 8px 0;color:#7c84a0">Name:</td><td id="slip-name" style="font-weight:600"></td></tr>
+          <tr><td style="padding:8px 20px 8px 0;color:#7c84a0">Department:</td><td id="slip-dept"></td></tr>
+          <tr><td style="padding:8px 20px 8px 0;color:#7c84a0">Month:</td><td id="slip-month"></td></tr>
+          <tr><td style="padding:8px 20px 8px 0;color:#7c84a0">Total Din:</td><td id="slip-total"></td></tr>
+          <tr><td style="padding:8px 20px 8px 0;color:#7c84a0">Present Days:</td><td id="slip-present"></td></tr>
+          <tr><td style="padding:8px 20px 8px 0;color:#7c84a0">Per Day Rate:</td><td id="slip-rate"></td></tr>
+          <tr><td style="padding:8px 20px 8px 0;font-weight:700">Total Salary:</td><td id="slip-total-sal" style="font-weight:700;color:#38c98a"></td></tr>
+        </tbody>
+      </table>
+      <br>
+      <button onclick="window.print()">Print Karen</button>
+      <button onclick="document.getElementById('slip').style.display='none'" style="background:#2e3354;margin-left:10px;">Band Karen</button>
+    </div>
+  </div>
+
+  <!-- LEAVE REQUEST -->
+  <div id="sec-leaves" class="section">
+    <div class="card">
+      <div class="card-title">New Leave Request</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="leave-date">
+        </div>
+        <div class="form-group">
+          <label>Reason</label>
+          <input id="leave-reason" placeholder="Reason for Leave...">
+        </div>
+      </div>
+      <button onclick="requestLeave()">Send Leave Request</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">My Leave Requests</div>
+      <table id="leave-table">
+        <thead>
+          <tr><th>Date</th><th>Reason</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "/api";
+let user = null;
+
+window.onload = () => {
+  user = JSON.parse(localStorage.getItem("hrms_user") || "null");
+  if (!user || user.role !== "employee") {
+    window.location.href = "/";
+    return;
+  }
+
+  document.getElementById("sb-name").textContent = user.name;
+  document.getElementById("sb-dept").textContent = user.department || "—";
+
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    localStorage.removeItem("hrms_user");
+    window.location.href = "/";
+  });
+
+  loadAttendance();
+  loadSalary();
+  loadMyLeaves();
+};
+
+function showSection(s, el) {
+  document.querySelectorAll(".section").forEach(d => d.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("sec-" + s).classList.add("active");
+  el.classList.add("active");
+  document.getElementById("page-title").textContent =
+    { attendance: "My Attendance", salary: "My Salary" }[s];
+}
+
+async function loadAttendance() {
+  const atts  = await fetch(`${API}/attendance/${user.id}`).then(r => r.json()).catch(() => []);
+  const tbody = document.querySelector("#att-table tbody");
+  tbody.innerHTML = atts.length === 0
+    ? `<tr><td colspan="2" style="text-align:center">Koi record nahi</td></tr>`
+    : [...atts].reverse().map(a => `
+        <tr>
+          <td>${a.date}</td>
+          <td>${a.status}</td>
+        </tr>`).join("");
+}
+
+async function loadSalary() {
+  const records = await fetch(`${API}/salary/${user.id}`).then(r => r.json()).catch(() => []);
+  const tbody   = document.querySelector("#sal-table tbody");
+  tbody.innerHTML = records.length === 0
+    ? `<tr><td colspan="5" style="text-align:center">Koi record nahi</td></tr>`
+    : [...records].reverse().map(r => `
+        <tr>
+          <td>${r.month}</td>
+          <td>${r.total_days}</td>
+          <td>${r.present_days}</td>
+          <td>Rs ${r.total_salary}</td>
+          <td><button onclick='showSlip(${JSON.stringify(r)})' style="padding:5px 12px;font-size:12px;">Slip</button></td>
+        </tr>`).join("");
+}
+
+function showSlip(r) {
+  document.getElementById("slip-name").textContent      = user.name;
+  document.getElementById("slip-dept").textContent      = user.department || "—";
+  document.getElementById("slip-month").textContent     = r.month;
+  document.getElementById("slip-total").textContent     = r.total_days + " din";
+  document.getElementById("slip-present").textContent   = r.present_days + " din";
+  document.getElementById("slip-rate").textContent      = "Rs " + r.salary_per_day;
+  document.getElementById("slip-total-sal").textContent = "Rs " + r.total_salary;
+  document.getElementById("slip").style.display         = "block";
+}
+
+
+async function requestLeave() {
+  const date   = document.getElementById("leave-date").value;
+  const reason = document.getElementById("leave-reason").value.trim();
+
+  if (!date) { alert("Please Select Date"); return; }
+
+  const res  = await fetch(`${API}/leaves`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: user.id, date, reason })
+  });
+  const data = await res.json();
+  alert(data.message || data.detail);
+  if (res.ok) {
+    document.getElementById("leave-date").value   = "";
+    document.getElementById("leave-reason").value = "";
+    loadMyLeaves();
+  }
+}
+
+async function loadMyLeaves() {
+  const records = await fetch(`${API}/leaves/${user.id}`).then(r => r.json()).catch(() => []);
+  const tbody   = document.querySelector("#leave-table tbody");
+  tbody.innerHTML = records.length === 0
+    ? `<tr><td colspan="3" style="text-align:center">No Leave Request Found</td></tr>`
+    : [...records].reverse().map(l => `
+        <tr>
+          <td>${l.date}</td>
+          <td>${l.reason || "—"}</td>
+          <td style="color:${l.status === 'approved' ? '#38c98a' : l.status === 'rejected' ? '#e05260' : '#f59e0b'}">${l.status}</td>
+        </tr>`).join("");
+}
+</script>
+
+</body>
+</html>
